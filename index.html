@@ -72,6 +72,9 @@
   .week .day.today .dow{color:var(--ink)}
   .week .day.today .num{background:#dcd7d4}
   .week .day.sel .num{background:var(--pink);color:#fff}
+  .week .day.period .num{background:var(--pink);color:#fff;font-weight:700}
+  .week .day.period.pred .num{background:#f6b3c7;color:#fff}
+  .week .day.period .dow{color:var(--pink)}
 
   /* ---------- hero ---------- */
   .hero{position:relative;text-align:center;padding:20px 24px 30px}
@@ -283,10 +286,10 @@
 
     <div class="hero">
       <div class="halo"></div>
-      <h1>Period in<br>9 days</h1>
-      <div class="sub">Lower chance of getting pregnant <span class="info">i</span></div>
+      <h1 id="hero-title">Period in<br>9 days</h1>
+      <div class="sub" id="hero-sub">Lower chance of getting pregnant <span class="info">i</span></div>
       <br>
-      <button class="logbtn" onclick="toast('Period logged for June 10')">Log period</button>
+      <button class="logbtn" id="logperiod" onclick="logPeriod()">Log period</button>
     </div>
 
     <div class="lower">
@@ -373,6 +376,35 @@ document.getElementById('week').innerHTML=nums.map((n,i)=>{
 }).join('');
 function selDay(el){document.querySelectorAll('.week .day').forEach(d=>d.classList.remove('sel'));
   el.classList.add('sel');}
+
+/* ---------- log period: marks today + next days as period (7-day cycle) ---------- */
+let periodOn=false;
+function logPeriod(){
+  periodOn=!periodOn;
+  const days=document.querySelectorAll('.week .day');
+  days.forEach((d,i)=>{
+    const n=nums[i];
+    d.classList.remove('period','pred');
+    if(periodOn&&n>=10&&n<=16){           // June 10–16 = the 7 logged days
+      d.classList.add('period');
+      if(n>10)d.classList.add('pred');     // day 1 solid, days 2–7 lighter
+    }
+  });
+  const t=document.getElementById('hero-title');
+  const s=document.getElementById('hero-sub');
+  const b=document.getElementById('logperiod');
+  if(periodOn){
+    t.innerHTML='Period:<br>Day 1';
+    s.innerHTML='Logged · June 10–16 <span class="info">i</span>';
+    b.textContent='Edit period';
+    toast('Period logged · next 7 days marked');
+  }else{
+    t.innerHTML='Period in<br>9 days';
+    s.innerHTML='Lower chance of getting pregnant <span class="info">i</span>';
+    b.textContent='Log period';
+    toast('Period log removed');
+  }
+}
 
 /* ---------- carousel cards ---------- */
 const cards=[
