@@ -234,13 +234,61 @@
   .cats{display:flex;align-items:center;justify-content:space-between;margin:22px 4px 12px}
   .cats h3{font-size:21px;font-weight:700}
   .cats .edit{color:var(--pink);font-weight:600;font-size:16px;cursor:pointer}
-  .catcard{background:#fff;border-radius:20px;padding:20px 18px}
+  .catcard{background:#fff;border-radius:20px;padding:20px 18px;margin-bottom:14px}
   .catcard h4{font-size:18px;font-weight:700;margin-bottom:16px}
+  .catcard h4 .tut{color:var(--pink);font-size:15px;font-weight:600;margin-left:10px}
+  .subt{color:var(--ink-soft);font-size:15px;margin:-10px 0 14px}
   .chips{display:flex;flex-wrap:wrap;gap:10px}
   .chip{background:#fbe9ec;border-radius:22px;padding:11px 16px;font-size:15px;font-weight:600;
     display:flex;align-items:center;gap:8px;cursor:pointer;border:2px solid transparent;color:#2a2730}
   .chip .ce{font-size:16px}
+  .chip.t-mood,.chip.t-preg,.chip.t-other{background:#fdeede}
+  .chip.t-symp{background:#f6e3f4}
+  .chip.t-disch{background:#ebe7fb}
+  .chip.t-dig{background:#fae3ee}
+  .chip.t-ovul{background:#daf1ef}
+  .chip.t-act{background:#def1e1}
+  .chip.t-oc{background:#dceefb}
   .chip.on{background:var(--pink);color:#fff;border-color:var(--pink)}
+  .linkrow{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);
+    margin-top:16px;padding-top:14px;font-size:17px;font-weight:600;cursor:pointer}
+  .linkrow span{color:#b7b2b6}
+  .wrow{display:flex;align-items:center;gap:10px}
+  .wrow h4{margin:0}
+  .wrow .wic{font-size:22px}
+  .wrow .wbtns{margin-left:auto;display:flex;gap:10px}
+  .roundbtn{width:44px;height:44px;border-radius:50%;border:none;background:#f3f0f0;font-size:19px;
+    cursor:pointer;font-family:var(--font)}
+  .roundbtn.dark{background:#e6e2e2}
+  .wval{font-size:18px;color:var(--ink-soft);margin-top:12px}
+  .wval b{font-size:36px;color:var(--ink);font-weight:800;margin-right:4px}
+  .whint{color:#b7b2b6;font-size:17px;margin-top:10px}
+  @keyframes fadeUpOut{to{opacity:0;transform:translateY(-24px)}}
+  .story.closing,.sheet.closing,.editcats.closing{animation:fadeUpOut .28s ease forwards}
+
+  /* ---------- EDIT CATEGORIES page ---------- */
+  .editcats{position:absolute;left:0;right:0;bottom:0;top:36px;background:#f1ece9;z-index:80;
+    border-radius:22px 22px 0 0;display:none;flex-direction:column;transform:translateY(100%);
+    transition:transform .3s cubic-bezier(.3,.8,.3,1)}
+  .editcats.open{display:flex;transform:translateY(0)}
+  .echead{display:grid;grid-template-columns:36px 1fr 36px;align-items:center;padding:8px 18px 4px}
+  .echead .arrow{font-size:24px;color:var(--ink);cursor:pointer}
+  .echead h2{text-align:center;font-size:20px;font-weight:700}
+  .ecbody{flex:1;overflow-y:auto;padding-bottom:24px}
+  .ecbody::-webkit-scrollbar{display:none}
+  .ecdesc{color:var(--ink-soft);padding:10px 24px 6px;font-size:16px;line-height:1.45}
+  .ecsug{background:#fff;border-radius:20px;margin:14px 18px;padding:18px;display:flex;
+    justify-content:space-between;align-items:center;font-size:19px;font-weight:600}
+  .eclist{background:#fff;border-radius:20px;margin:14px 18px 0;padding:0 18px}
+  .ecrow{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:18px 0;border-bottom:1px solid var(--line);font-size:18px;font-weight:500}
+  .ecrow:last-child{border-bottom:none}
+  .sw{width:52px;height:32px;border-radius:16px;background:#d9d4d6;position:relative;
+    transition:.2s;cursor:pointer;flex:0 0 52px}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;
+    border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .sw.on{background:var(--pink)}
+  .sw.on::after{left:23px}
   .savebar{padding:14px 18px;background:#f1ece9}
   .savebtn{width:100%;background:var(--pink);color:#fff;border:none;font-family:var(--font);
     font-size:17px;font-weight:700;padding:16px;border-radius:28px;cursor:pointer}
@@ -323,10 +371,10 @@
       <button class="x" onclick="closeStory()">✕</button>
     </div>
     <div class="story-body" id="story-body"></div>
-    <div class="swipe">
+    <div class="swipe" onclick="closeStory()">
       <div class="chev">⌃</div>
       <div class="st">SWIPE UP</div>
-      <div class="sb" id="story-swipe-sub">to log your symptoms</div>
+      <div class="sb">to go back home</div>
     </div>
     <div class="nav-zone left" onclick="storyPrev()"></div>
     <div class="nav-zone right" onclick="storyNext()"></div>
@@ -348,15 +396,28 @@
         <div class="quick" id="quick"></div>
       </div>
 
-      <div class="cats"><h3>Categories</h3><span class="edit" onclick="toast('Edit categories')">Edit</span></div>
-      <div class="catcard">
-        <h4>Sex and sex drive</h4>
-        <div class="chips" id="chips"></div>
-      </div>
+      <div class="cats"><h3>Categories</h3><span class="edit" onclick="openEditCats()">Edit</span></div>
+      <div id="allcats"></div>
       <div style="height:20px"></div>
     </div>
     <div class="savebar">
       <button class="savebtn" id="savebtn" disabled onclick="saveLog()">Select to save</button>
+    </div>
+  </div>
+
+  <!-- ===== EDIT CATEGORIES page ===== -->
+  <div class="editcats" id="editcats">
+    <div class="handle"></div>
+    <div class="echead">
+      <span class="arrow" onclick="closeEditCats()">‹</span>
+      <h2>Edit categories</h2>
+      <span></span>
+    </div>
+    <div class="ecbody">
+      <div class="ecdesc">Add, remove and rearrange categories yourself, or let your app
+        personalize things based on your cycle phases and logged symptoms.</div>
+      <div class="ecsug">Suggested categories <span class="sw on" onclick="this.classList.toggle('on')"></span></div>
+      <div class="eclist" id="eclist"></div>
     </div>
   </div>
 
@@ -488,7 +549,6 @@ function openStory(key){
   story.style.background=s.bg;
   document.getElementById('story-meta').textContent=s.meta;
   document.getElementById('story-body').innerHTML=s.body;
-  document.getElementById('story-swipe-sub').textContent=s.swipe;
   let bars='';for(let i=0;i<s.segs;i++)bars+=`<div class="bar" id="bar${i}"><i></i></div>`;
   document.getElementById('bars').innerHTML=bars;
   paintBars();
@@ -501,7 +561,10 @@ function paintBars(){
 function storyNext(){if(!curStory)return;
   if(curSeg<curStory.segs-1){curSeg++;paintBars();}else closeStory();}
 function storyPrev(){if(!curStory)return;if(curSeg>0){curSeg--;paintBars();}}
-function closeStory(){document.getElementById('story').classList.remove('open');curStory=null;}
+function closeStory(){const st=document.getElementById('story');
+  if(!st.classList.contains('open'))return;
+  st.classList.add('closing');
+  setTimeout(()=>{st.classList.remove('open','closing');curStory=null;},270);}
 
 /* ---------- LOG SYMPTOMS sheet ---------- */
 const quick=[{e:'🤱',l:'Tender breasts'},{e:'🍔',l:'Cravings'},{e:'🔋',l:'Fatigue'},{e:'😢',l:'Mood swings'}];
@@ -509,12 +572,92 @@ document.getElementById('quick').innerHTML=quick.map((q,i)=>
   `<div class="qitem" onclick="this.classList.toggle('on');refreshSave()">
      <div class="qc">${q.e}</div><div class="ql">${q.l}</div></div>`).join('');
 
-const chips=['🚫 Didn\'t have sex','🔒 Protected sex','🔓 Unprotected sex','💋 Oral sex',
-  '💗 Masturbation','🤲 Sensual touch','✨ Orgasm','💢 No orgasm',
-  '💕 High sex drive','💟 Neutral sex drive','🤍 Low sex drive'];
-document.getElementById('chips').innerHTML=chips.map(c=>{
-  const sp=c.indexOf(' ');return `<div class="chip" onclick="this.classList.toggle('on');refreshSave()">
-    <span class="ce">${c.slice(0,sp)}</span>${c.slice(sp+1)}</div>`;}).join('');
+/* ---------- ALL logging categories (cloned 1:1 from the real app's flat list) ---------- */
+const categories=[
+ {title:"Sex and sex drive",cls:"",chips:[["🚫","Didn't have sex"],["🔒","Protected sex"],
+   ["🔓","Unprotected sex"],["💋","Oral sex"],["💗","Masturbation"],["🤲","Sensual touch"],
+   ["✨","Orgasm"],["💢","No orgasm"],["💕","High sex drive"],["💟","Neutral sex drive"],["🤍","Low sex drive"]]},
+ {title:"Mood",cls:"t-mood",chips:[["😌","Calm"],["🙂","Happy"],["🤩","Energetic"],["😜","Frisky"],
+   ["😢","Mood swings"],["😠","Irritated"],["😞","Sad"],["😰","Anxious"],["😔","Depressed"],
+   ["😣","Feeling guilty"],["🌫️","Obsessive thoughts"],["🪫","Low energy"],["😑","Apathetic"],
+   ["😕","Confused"],["😖","Very self-critical"]]},
+ {title:"Symptoms",cls:"t-symp",chips:[["👍","Everything is fine"],["🎯","Cramps"],["🤱","Tender breasts"],
+   ["🤕","Headache"],["🫥","Acne"],["🔥","Backache"],["🔋","Fatigue"],["🥵","Hot flashes"],
+   ["😓","Night sweats"],["🌁","Brain fog"],["🦴","Joint pain"],["🌶️","Burning mouth"],["🍔","Cravings"],
+   ["🌙","Insomnia"],["😖","Abdominal pain"],["🌸","Vaginal itching"],["🏜️","Vaginal dryness"],
+   ["🧴","Dry skin"],["👁️","Dry eyes"]]},
+ {title:"Vaginal discharge",cls:"t-disch",chips:[["🚫","No discharge"],["💧","Creamy"],["💦","Watery"],
+   ["🍯","Sticky"],["🥚","Egg white"],["🩸","Spotting"],["❗","Unusual"],["⚪","Clumpy white"],["🩶","Gray"]]},
+ {title:"Digestion and stool",cls:"t-dig",chips:[["🤢","Nausea"],["🎈","Bloating"],["🔒","Constipation"],["💨","Diarrhea"]]},
+ {title:"Pregnancy test",cls:"t-preg",chips:[["🚫","Didn't take tests"],["➕","Positive"],["➖","Negative"],["〰️","Faint line"]]},
+ {title:"Ovulation test",cls:"t-ovul",tutorial:true,subtitle:"Log them to know when you ovulate",
+   chips:[["🧪","Log ovulation test"],["🚫","Didn't take tests"],["📋","Ovulation: my method"]]},
+ {title:"Other",cls:"t-other",chips:[["📍","Travel"],["⚡","Stress"],["🧘","Meditation"],["📖","Journaling"],
+   ["💪","Kegel exercises"],["🫁","Breathing exercises"],["🩹","Disease or injury"],["🍷","Alcohol"],["💊","Hormonal therapy"]]},
+ {title:"Physical activity",cls:"t-act",chips:[["🚫","Didn't exercise"],["🤸","Yoga"],["🏋️","Gym"],
+   ["🎵","Aerobics & dancing"],["🏊","Swimming"],["🏀","Team sports"],["🏃","Running"],["🚴","Cycling"],["🚶","Walking"]]},
+ {title:"Oral contraceptives (OC)",cls:"t-oc",link:"Set up reminders",
+   chips:[["💊","Taken on time"],["⏰","Yesterday's pill"]]},
+ {title:"Other pills (non-OC)",cls:"t-oc",subtitle:"Log other pills you take a day",link:"Set up reminders",
+   chips:[["➕","Add pill"]]},
+];
+const widgets=`
+ <div class="catcard">
+   <div class="wrow"><span class="wic">🥤</span><h4>Water</h4>
+     <div class="wbtns"><button class="roundbtn" onclick="bumpWater(-1)">−</button>
+       <button class="roundbtn dark" onclick="bumpWater(1)">+</button></div></div>
+   <div class="wval"><b id="watercount">0</b>/ 64 fl. oz.</div>
+   <div class="linkrow" onclick="toast('Reminders and Settings')">Reminders and Settings <span>›</span></div>
+ </div>
+ <div class="catcard">
+   <div class="wrow"><span class="wic">⚖️</span><h4>Weight</h4>
+     <div class="wbtns"><button class="roundbtn" onclick="toast('Weight cleared')">🗑</button>
+       <button class="roundbtn dark" onclick="toast('Log your weight')">✏️</button></div></div>
+   <div class="whint">Log your weight</div>
+   <div class="linkrow" onclick="toast('View chart')">View chart <span>›</span></div>
+ </div>
+ <div class="catcard">
+   <div class="wrow"><span class="wic">🌡️</span><h4>Basal temperature</h4>
+     <div class="wbtns"><button class="roundbtn" onclick="toast('Temperature cleared')">🗑</button>
+       <button class="roundbtn dark" onclick="toast('Log your temperature')">✏️</button></div></div>
+   <div class="whint">Log your temperature</div>
+   <div class="linkrow" onclick="toast('View chart')">View chart <span>›</span></div>
+ </div>
+ <div class="catcard">
+   <div class="wrow"><span class="wic">📝</span><h4>Notes</h4>
+     <div class="wbtns"><button class="roundbtn" onclick="toast('Note cleared')">🗑</button>
+       <button class="roundbtn dark" onclick="toast('Add a note')">✏️</button></div></div>
+   <div class="whint">Add a note about today</div>
+ </div>`;
+document.getElementById('allcats').innerHTML=categories.map(c=>`
+ <div class="catcard" data-cat="${c.title}">
+   <h4>${c.title}${c.tutorial?'<span class="tut">Tutorial ▶</span>':''}</h4>
+   ${c.subtitle?`<div class="subt">${c.subtitle}</div>`:''}
+   <div class="chips">${c.chips.map(p=>`<div class="chip ${c.cls}"
+     onclick="this.classList.toggle('on');refreshSave()"><span class="ce">${p[0]}</span>${p[1]}</div>`).join('')}</div>
+   ${c.link?`<div class="linkrow" onclick="toast('${c.link}')">${c.link} <span>›</span></div>`:''}
+ </div>`).join('')+widgets;
+
+let water=0;
+function bumpWater(d){water=Math.max(0,Math.min(64,water+8*d));
+  document.getElementById('watercount').textContent=water;
+  if(d>0&&water<=64)toast('Water: '+water+' fl. oz. logged');}
+
+/* ---------- Edit categories page ---------- */
+document.getElementById('eclist').innerHTML=categories.map(c=>`
+  <div class="ecrow">${c.title}
+    <span class="sw on" onclick="toggleCat(this,'${c.title}')"></span></div>`).join('');
+function toggleCat(sw,title){
+  sw.classList.toggle('on');
+  const on=sw.classList.contains('on');
+  document.querySelectorAll('#allcats .catcard[data-cat]').forEach(card=>{
+    if(card.dataset.cat===title)card.style.display=on?'':'none';});
+  toast(title+(on?' added':' removed'));}
+function openEditCats(){document.getElementById('editcats').classList.add('open');}
+function closeEditCats(){const ec=document.getElementById('editcats');
+  if(!ec.classList.contains('open'))return;
+  ec.classList.add('closing');
+  setTimeout(()=>{ec.classList.remove('open','closing');},270);}
 
 let cycleDay=21,dayOffset=0;
 function bumpDay(d){dayOffset+=d;cycleDay=21+dayOffset;
@@ -531,9 +674,24 @@ function saveLog(){
   closeSheet();toast(n+' symptom'+(n>1?'s':'')+' logged');
   document.querySelectorAll('#sheet .on').forEach(e=>e.classList.remove('on'));refreshSave();}
 function openSheet(){document.getElementById('sheet').classList.add('open');}
-function closeSheet(){document.getElementById('sheet').classList.remove('open');}
+function closeSheet(){const sh=document.getElementById('sheet');
+  if(!sh.classList.contains('open'))return;
+  sh.classList.add('closing');
+  setTimeout(()=>{sh.classList.remove('open','closing');},270);}
 // drag handle / tap outside top closes sheet
 document.querySelector('#sheet .handle').addEventListener('click',closeSheet);
+
+/* ---------- swipe up on any pop-up fades back to home ---------- */
+function addSwipeUp(el,fn){let y0=null;
+  el.addEventListener('touchstart',e=>{y0=e.touches[0].clientY},{passive:true});
+  el.addEventListener('touchend',e=>{if(y0===null)return;
+    if(y0-e.changedTouches[0].clientY>70)fn();y0=null;},{passive:true});}
+addSwipeUp(document.getElementById('story'),closeStory);
+addSwipeUp(document.querySelector('#sheet .sheet-head'),closeSheet);
+addSwipeUp(document.querySelector('#sheet .handle'),closeSheet);
+addSwipeUp(document.querySelector('#editcats .echead'),closeEditCats);
+addSwipeUp(document.querySelector('#editcats .handle'),closeEditCats);
+document.querySelector('#editcats .handle').addEventListener('click',closeEditCats);
 
 /* ---------- bottom tabs ---------- */
 const tabs=[{i:'📅',l:'Today',k:'today'},{i:'🔲',l:'Insights',k:'x',dot:0},
